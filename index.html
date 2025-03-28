@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Match Updates</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="hero-section">
+        <canvas id="cricket-3d"></canvas>
+        <div class="hero-content">
+            <h1 class="animated-title">🏏 Live Cricket Updates</h1>
+            <p class="hero-subtitle">Real-time match results powered by AI</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for players or teams...">
+                <button id="searchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <nav class="animated-nav">
+            <ul>
+                <li><a href="#" class="active nav-link">Home</a></li>
+                <li><a href="#upcoming" class="nav-link">Upcoming Matches</a></li>
+                <li><a href="#players" class="nav-link">Star Players</a></li>
+                <li><a href="#live" class="nav-link">Live Scores</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="search-results" class="animated-section" style="display: none;">
+            <h2>Search Results</h2>
+            <div id="results-container"></div>
+        </section>
+
+        <section id="upcoming" class="animated-section">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Upcoming Matches
+            </h2>
+            <div class="upcoming-matches">
+                <!-- Upcoming matches will be inserted here -->
+            </div>
+        </section>
+
+        <section id="players" class="animated-section">
+            <h2>Star Players</h2>
+            <div class="players-grid">
+                <!-- Players will be inserted here -->
+            </div>
+        </section>
+
+        <section id="live-match" class="animated-section">
+            <h2>Latest Match Results</h2>
+            <div class="match-container">
+                <div id="match-results">
+                    <!-- Match results will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="recent-matches" class="animated-section">
+            <h2>Recent Matches</h2>
+            <div id="matches-list">
+                <!-- Recent matches will be displayed here -->
+            </div>
+        </section>
+
+        <!-- Cricket World Section -->
+        <section id="cricket-world" class="cricket-world-section">
+            <div class="rotating-globe">
+                <div class="globe"></div>
+            </div>
+            <div class="content-container">
+                <h2>The World of Cricket</h2>
+                <div class="cricket-world-content">
+                    <div class="chapter" data-aos="fade-up">
+                        <h3>Origins & Evolution</h3>
+                        <div class="chapter-content"></div>
+                    </div>
+                    <div class="chapter" data-aos="fade-up">
+                        <h3>Modern Cricket</h3>
+                        <div class="chapter-content"></div>
+                    </div>
+                    <div class="chapter" data-aos="fade-up">
+                        <h3>Global Impact</h3>
+                        <div class="chapter-content"></div>
+                    </div>
+                    <div class="chapter" data-aos="fade-up">
+                        <h3>Cricket Economics</h3>
+                        <div class="chapter-content"></div>
+                    </div>
+                    <div class="chapter" data-aos="fade-up">
+                        <h3>Future of Cricket</h3>
+                        <div class="chapter-content"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cricket Career Guide Section -->
+        <section id="career-guide" class="career-guide-section">
+            <div class="3d-player-model">
+                <div class="player-model"></div>
+            </div>
+            <div class="content-container">
+                <h2>Your Cricket Journey Starts Here</h2>
+                <div class="career-guide-content">
+                    <div class="path-section" data-aos="fade-right">
+                        <h3>Getting Started</h3>
+                        <div class="path-content"></div>
+                    </div>
+                    <div class="path-section" data-aos="fade-left">
+                        <h3>Training & Development</h3>
+                        <div class="path-content"></div>
+                    </div>
+                    <div class="path-section" data-aos="fade-right">
+                        <h3>Building Your Career</h3>
+                        <div class="path-content"></div>
+                    </div>
+                    <div class="path-section" data-aos="fade-left">
+                        <h3>Professional Level</h3>
+                        <div class="path-content"></div>
+                    </div>
+                    <div class="path-section" data-aos="fade-up">
+                        <h3>Resources & Support</h3>
+                        <div class="path-content"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h2>Loading 3D Cricket Hub</h2>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p class="loading-status">Initializing...</p>
+        </div>
+    </div>
+    <div id="scene-container" style="display: none;"></div>
+    <div id="ui-overlay" style="display: none;">
+        <div id="navigation">
+            <button data-section="pitch">Pitch</button>
+            <button data-section="newsstand">News Stand</button>
+            <button data-section="matches">Live Matches</button>
+            <button data-section="trophyroom">Trophy Room</button>
+            <button data-section="fanzone">Fan Zone</button>
+        </div>
+        <div id="info-panel">
+            <h2>Welcome to Cricket Hub</h2>
+            <p>Navigate using mouse or arrow keys</p>
+        </div>
+    </div>
+
+    <!-- Match Center -->
+    <div id="match-center" class="overlay-panel" style="display: none;">
+        <div class="match-header">
+            <h2>IPL 2025 Live Matches</h2>
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="match-container">
+            <div class="match-main">
+                <div class="match-tabs">
+                    <button class="tab-btn active" data-tab="live">Live</button>
+                    <button class="tab-btn" data-tab="upcoming">Upcoming</button>
+                    <button class="tab-btn" data-tab="completed">Completed</button>
+                    <button class="tab-btn" data-tab="dream11">Dream11</button>
+                </div>
+                <div class="match-content">
+                    <div id="live-matches" class="match-tab active">
+                        <!-- Live matches will be inserted here -->
+                    </div>
+                    <div id="upcoming-matches" class="match-tab">
+                        <!-- Upcoming matches will be inserted here -->
+                    </div>
+                    <div id="completed-matches" class="match-tab">
+                        <!-- Completed matches will be inserted here -->
+                    </div>
+                    <div id="dream11-panel" class="match-tab">
+                        <div class="dream11-creator">
+                            <h3>Create Your Dream11 Team</h3>
+                            <div class="team-info">
+                                <div class="selected-match">
+                                    <span id="team1-name"></span> vs <span id="team2-name"></span>
+                                </div>
+                                <div class="team-constraints">
+                                    <p>Select 11 players:</p>
+                                    <ul>
+                                        <li>4-6 Batsmen</li>
+                                        <li>1-4 All-rounders</li>
+                                        <li>3-5 Bowlers</li>
+                                        <li>1 Wicket-keeper</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="player-selection">
+                                <div class="player-filters">
+                                    <button class="filter-btn active" data-role="all">All</button>
+                                    <button class="filter-btn" data-role="bat">BAT</button>
+                                    <button class="filter-btn" data-role="bowl">BOWL</button>
+                                    <button class="filter-btn" data-role="ar">AR</button>
+                                    <button class="filter-btn" data-role="wk">WK</button>
+                                </div>
+                                <div class="players-pool">
+                                    <!-- Available players will be listed here -->
+                                </div>
+                                <div class="selected-players">
+                                    <h4>Selected Players (0/11)</h4>
+                                    <div class="selected-list">
+                                        <!-- Selected players will appear here -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ai-analysis">
+                                <button id="analyze-team" class="analyze-btn">Analyze Team</button>
+                                <button id="suggest-team" class="suggest-btn">Get AI Suggestion</button>
+                                <div class="analysis-result">
+                                    <!-- AI analysis will appear here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="match-analysis-panel">
+                <div class="analysis-header">
+                    <h3>Match Analysis</h3>
+                </div>
+                <div class="analysis-content">
+                    <div class="pitch-conditions">
+                        <h4>Pitch Report</h4>
+                        <div id="pitch-analysis">
+                            <!-- Pitch analysis will be shown here -->
+                        </div>
+                    </div>
+                    <div class="team-analysis">
+                        <h4>Team Analysis</h4>
+                        <div id="team-comparison">
+                            <!-- Team comparison will be shown here -->
+                        </div>
+                    </div>
+                    <div class="key-players">
+                        <h4>Key Players to Watch</h4>
+                        <div id="key-players-list">
+                            <!-- Key players will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Player -->
+    <div id="video-player" class="overlay-panel" style="display: none;">
+        <div class="video-header">
+            <h3>Match Highlights</h3>
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="video-container">
+            <video id="highlight-video" controls>
+                Your browser does not support the video element.
+            </video>
+        </div>
+        <div class="video-playlist">
+            <h4>Recent Highlights</h4>
+            <div class="playlist-items">
+                <!-- Highlight clips will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Stats Popup -->
+    <div id="player-stats" class="overlay-panel player-stats" style="display: none;">
+        <div class="stats-header">
+            <div class="player-info">
+                <img class="player-avatar" src="" alt="Player Photo">
+                <div class="player-basic">
+                    <h3 class="player-name"></h3>
+                    <p class="player-role"></p>
+                    <p class="player-team"></p>
+                </div>
+            </div>
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="stats-content">
+            <div class="stats-tabs">
+                <button class="stat-tab-btn active" data-tab="career">Career</button>
+                <button class="stat-tab-btn" data-tab="ipl2025">IPL 2025</button>
+                <button class="stat-tab-btn" data-tab="recent">Recent Form</button>
+            </div>
+            <div class="stats-panels">
+                <div id="career-stats" class="stats-panel active">
+                    <div class="stats-grid">
+                        <!-- Career statistics will be inserted here -->
+                    </div>
+                </div>
+                <div id="ipl2025-stats" class="stats-panel">
+                    <div class="stats-grid">
+                        <!-- IPL 2025 statistics will be inserted here -->
+                    </div>
+                </div>
+                <div id="recent-stats" class="stats-panel">
+                    <div class="recent-form">
+                        <!-- Recent form will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            <div class="player-milestones">
+                <h4>Career Milestones</h4>
+                <div class="milestone-list">
+                    <!-- Milestones will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scoreboard Panel -->
+    <div id="scoreboard" class="overlay-panel scoreboard" style="display: none;">
+        <div class="scoreboard-header">
+            <h2>Live Scoreboard</h2>
+            <div class="match-meta">
+                <span class="venue"></span>
+                <span class="match-time"></span>
+            </div>
+            <button class="close-btn">&times;</button>
+        </div>
+        
+        <div class="scoreboard-content">
+            <div class="team-innings active">
+                <div class="team-header">
+                    <img class="team-logo" src="" alt="">
+                    <h3 class="team-name"></h3>
+                    <div class="team-score">
+                        <span class="total"></span>
+                        <span class="overs"></span>
+                    </div>
+                </div>
+                
+                <div class="batting-stats">
+                    <h4>Batting</h4>
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Batter</th>
+                                <th>R</th>
+                                <th>B</th>
+                                <th>4s</th>
+                                <th>6s</th>
+                                <th>SR</th>
+                            </tr>
+                        </thead>
+                        <tbody class="batting-stats-body">
+                            <!-- Batting stats will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="partnership-graph">
+                    <h4>Partnerships</h4>
+                    <div class="graph-container">
+                        <!-- Partnership visualization will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="bowling-stats">
+                    <h4>Bowling</h4>
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Bowler</th>
+                                <th>O</th>
+                                <th>M</th>
+                                <th>R</th>
+                                <th>W</th>
+                                <th>Econ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bowling-stats-body">
+                            <!-- Bowling stats will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="wagon-wheel">
+                    <h4>Wagon Wheel</h4>
+                    <div class="wheel-container">
+                        <canvas id="wagon-wheel-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="match-stats">
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <h5>Run Rate</h5>
+                            <span class="current-rr"></span>
+                            <span class="req-rr"></span>
+                        </div>
+                        <div class="stat-box">
+                            <h5>Last 5 Overs</h5>
+                            <span class="last-five"></span>
+                        </div>
+                        <div class="stat-box">
+                            <h5>Boundaries</h5>
+                            <span class="fours"></span>
+                            <span class="sixes"></span>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <h5>Dot Ball %</h5>
+                            <span class="dot-percent"></span>
+                        </div>
+                        <div class="stat-box">
+                            <h5>Extras</h5>
+                            <span class="extras-detail"></span>
+                        </div>
+                        <div class="stat-box">
+                            <h5>Power Play</h5>
+                            <span class="powerplay-score"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hindi Match Description -->
+    <div id="match-description" class="match-description-panel">
+        <!-- Hindi match description will be inserted here -->
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Cricket Match Updates | Powered by AI</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
